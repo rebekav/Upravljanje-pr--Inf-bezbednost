@@ -374,24 +374,18 @@ public class KorisnikServiceImpl implements KorisnikService {
     }
 
     @Override
-    public Collection<KorisnikDtoRes> pacijentiKlinikeZaSestru(String name, String filter) throws Exception {
+    public Collection<KorisnikDtoRes> pacijentiKlinikeZaSestru(String name, String f, String d) throws Exception {
         User lekar = userRepository.findByEmail(name);
         if (lekar == null) {
             throw new Exception("Korisnik ne postoji");
         }
+
+        // Koristi se da ukloni duplikate
         HashMap<Integer, KorisnikDtoRes> response = new HashMap<>();
         List<Pregled> pregledi = pregledRepository.findAllByMedicinskaSestraAndPacijentIsNotNull(lekar);
+
         for(Pregled p:pregledi){
             User pacijent = p.getPacijent();
-            if(filter!=null){
-                filter = filter.toLowerCase();
-                String ime = pacijent.getIme().toLowerCase();
-                String prezime = pacijent.getPrezime().toLowerCase();
-                String identifikator = pacijent.getIdentifikator().toLowerCase();
-                if(!ime.contains(filter) && !prezime.contains(filter) && !identifikator.contains(filter)){
-                    continue;
-                }
-            }
             KorisnikDtoRes tmp = new KorisnikDtoRes();
             tmp.setId(pacijent.getId());
             tmp.setEmail(pacijent.getEmail());
@@ -404,6 +398,21 @@ public class KorisnikServiceImpl implements KorisnikService {
             tmp.setAdresa(pacijent.getAdresa());
             response.put(pacijent.getId(),tmp);
         }
-        return response.values();
+        // Lista da bi se moglo sortirat
+        List<KorisnikDtoRes> out = response.values().stream().collect(Collectors.toList());
+        if(!f.isEmpty()) {
+            switch (f){
+                case "ime":
+                    out.sort((Comparator.comparing(o -> o.getIme())));
+                    break;
+                case "id":
+                    out.sort((Comparator.comparingInt(o -> o.getId())));
+                    break;
+            }
+            if(d.equals("desc")){
+                Collections.reverse(out);
+            }
+        }
+        return out;
     }
 }

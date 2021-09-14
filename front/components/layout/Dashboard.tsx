@@ -3,6 +3,9 @@ import { ReactNode } from "react";
 import { NavBar } from "../nav/NavBar";
 import { SideBar } from "../nav/SideBar";
 import { Box } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/client";
+import { Session } from "next-auth";
 
 interface DashboardProps {
   children?: ReactNode;

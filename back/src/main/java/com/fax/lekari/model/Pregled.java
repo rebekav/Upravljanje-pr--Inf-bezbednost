@@ -61,6 +61,10 @@ public class Pregled implements Serializable {
 	@OneToOne(mappedBy = "pregled")
 	private ZdravstveniKarton zdravstveniKartons;
 
+
+	@OneToMany(mappedBy = "pregled")
+	private List<Recept> recepti;
+
 	public Pregled() {
 	}
 

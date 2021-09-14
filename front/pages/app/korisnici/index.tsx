@@ -20,7 +20,7 @@ import {
   getKorisnici,
 } from "../../../util/api/korisnik";
 import { useDisclosure } from "@chakra-ui/react";
-import { KCreate } from "../../../components/Modal/kCreate";
+import { KCreate } from "../../../components/Modal/KCreate";
 import { AdminCreate } from "../../../components/Modal/AdminCreate";
 
 interface KorsniciProps {

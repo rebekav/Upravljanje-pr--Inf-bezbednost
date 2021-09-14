@@ -27,7 +27,7 @@ public interface KorisnikService {
 
     Collection<KorisnikDtoRes> pacijentiKlinikeZaLekara(String name, String filter) throws Exception;
 
-    Collection<KorisnikDtoRes> pacijentiKlinikeZaSestru(String name, String filter) throws Exception;
+    Collection<KorisnikDtoRes> pacijentiKlinikeZaSestru(String name, String f, String d) throws Exception;
 
     String registerSuperAdmin(KorisnikDtoReq korisnikDto) throws Exception;
 

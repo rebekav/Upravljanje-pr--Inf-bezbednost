@@ -16,9 +16,7 @@ import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
 import { useRouter } from "next/dist/client/router";
 
-interface NavBarProps {
-  session: Session;
-}
+interface NavBarProps {}
 
 export function NavBar(props: NavBarProps) {
   const [session, loading] = useSession();
@@ -49,7 +47,9 @@ export function NavBar(props: NavBarProps) {
               <ChevronDownIcon fontSize="xl" />
             </MenuButton>
             <MenuList>
-              <MenuItem>Podesavanja</MenuItem>
+              <MenuItem>
+                <Link href="/app/profil"> Profil</Link>
+              </MenuItem>
               <MenuDivider />
               <MenuItem
                 onClick={() => {
@@ -66,7 +66,3 @@ export function NavBar(props: NavBarProps) {
     </HStack>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return { props: { session: await getSession(ctx) } };
-};
