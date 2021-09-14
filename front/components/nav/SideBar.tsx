@@ -40,6 +40,9 @@ export function SideBar(props: SideBarProps) {
           <Box>
             <Link href="/app/sestra/recepti">Recepti</Link>
           </Box>
+          <Box>
+            <Link href="/app/sestra/radnikalendar">Radni Kalendar</Link>
+          </Box>
         </>
       )}
     </VStack>

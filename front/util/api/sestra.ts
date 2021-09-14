@@ -1,6 +1,6 @@
 import { Session } from "next-auth";
-import { getSortedRoutes } from "next/dist/shared/lib/router/utils";
 import useSWR from "swr";
+import { PregledResDTOToEvent } from "../adapters";
 import { KorisnikResDTO } from "../types/korisnik";
 import { ReceptResDTO } from "../types/recept";
 import { fetcher, URL } from "./base";
@@ -50,4 +50,18 @@ export const overiRecept = (session: Session, id: number) => {
   return fetcher(session, URL + `/sestre/recepti/overa/${id}`, {
     method: "PUT",
   });
+};
+
+export const getRadniKalendar = (session: Session) => {
+  const { data, error, mutate } = useSWR<[PregledResDTO]>(
+    URL + `/pregled/radniKalendarZaSestru`,
+    (url) => fetcher(session, url)
+  );
+  const out = data?.map((v) => PregledResDTOToEvent(v));
+  return {
+    data: out,
+    isLoading: !data && !error,
+    error: error,
+    mutate,
+  };
 };
