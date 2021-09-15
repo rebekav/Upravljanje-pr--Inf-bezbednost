@@ -78,6 +78,22 @@ public class KlinikaServiceImpl implements KlinikaService {
     }
 
     @Override
+    public List<SimpleSelectDTORes> getSestre(String name) throws Exception {
+        User user = userRepository.findByEmail(name);
+        if (user == null) {
+            throw new Exception("Korisnik ne postoji");
+        }
+        List<User> zaposleni = user.getKlinika().getUsers();
+        List<SimpleSelectDTORes> out = new ArrayList<>();
+        for(User zaposlen: zaposleni ){
+            if(zaposlen.getRoles().stream().anyMatch(role -> role.getNaziv().equals("MEDICINSKA_SESTRA"))){
+                out.add(new SimpleSelectDTORes(zaposlen.getId(),zaposlen.getIme()+" "+zaposlen.getPrezime()));
+            }
+        }
+        return out;
+    }
+
+    @Override
     public String createKlinika(KlinikaDtoReq klinikaDtoReq) {
         Klinika klinika = new Klinika();
         klinika.setAdresa(klinikaDtoReq.getAdresa());

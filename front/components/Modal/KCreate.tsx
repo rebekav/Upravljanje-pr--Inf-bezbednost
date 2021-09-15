@@ -28,7 +28,7 @@ export function KCreate(props: KCreateProps) {
     prezime: "",
     adresa: "",
     email: "",
-    idKlinika: 0,
+    idKlinika: 1,
     identifikator: "",
     pass: "",
     telefon: "",
@@ -38,7 +38,7 @@ export function KCreate(props: KCreateProps) {
     <Modal isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Dodaj Kliniku</ModalHeader>
+        <ModalHeader>Dodaj Admina Klinike</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Stack spacing={3}>
@@ -132,7 +132,7 @@ export function KCreate(props: KCreateProps) {
                   prezime: "",
                   adresa: "",
                   email: "",
-                  idKlinika: 0,
+                  idKlinika: 1,
                   identifikator: "",
                   pass: "",
                   telefon: "",

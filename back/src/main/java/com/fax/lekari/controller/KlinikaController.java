@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,17 @@ public class KlinikaController {
         try {
             String poruka = klinikaService.createKlinika(klinikaDtoReq);
             return new ResponseEntity<>(new SimpleStringResponseDTO(poruka), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/sestre")
+    @PreAuthorize("hasAuthority('KLINIKA_ADMIN') || hasAuthority('LEKAR')")
+    public ResponseEntity<?> usluge(Principal principal) {
+        try {
+            List<SimpleSelectDTORes> usluge = klinikaService.getSestre(principal.getName());
+            return new ResponseEntity<>(usluge, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
         }

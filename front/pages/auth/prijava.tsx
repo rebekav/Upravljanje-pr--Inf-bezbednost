@@ -5,6 +5,7 @@ import { Input, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { Flex, Box, Stack } from "@chakra-ui/layout";
 import { useState } from "react";
+import { useToast } from "@chakra-ui/react";
 
 interface PrijavaProps {
   csrfToken: string;
@@ -12,6 +13,7 @@ interface PrijavaProps {
 
 const Prijava: NextPage<PrijavaProps> = (props) => {
   const router = useRouter();
+  const toast = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [session, loading] = useSession();
@@ -47,6 +49,7 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
           <Box>
             <Text pb="2">Lozinka:</Text>
             <Input
+              type="password"
               placeholder="Lozinka:"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -68,12 +71,24 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
                   }),
                 })
                   .then((data) => {
-                    if (new URL(data.url).searchParams.get("error"))
-                      console.log("CREDENTIALS");
-                    else router.reload();
+                    if (new URL(data.url).searchParams.get("error")) {
+                      toast({
+                        title: "Greska",
+                        description: "Losi kombinacija email-a i lozinke",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    } else router.reload();
                   })
                   .catch((err) => {
-                    console.error(err);
+                    toast({
+                      title: "Greska",
+                      description: "Greska prilikom logovanja",
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
                   });
               }}
             >

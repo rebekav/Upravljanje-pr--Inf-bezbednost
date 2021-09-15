@@ -13,4 +13,6 @@ public interface KlinikaService {
     List<SimpleSelectDTORes> lekari(String name) throws Exception;
 
     List<SimpleSelectDTORes> medicinskeSestre(String name) throws Exception;
+
+    List<SimpleSelectDTORes> getSestre(String name) throws Exception;
 }

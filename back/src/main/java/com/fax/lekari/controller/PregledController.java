@@ -58,7 +58,7 @@ public class PregledController {
     }
 
     @GetMapping("/usluge")
-    @PreAuthorize("hasAuthority('KLINIKA_ADMIN')")
+    @PreAuthorize("hasAuthority('KLINIKA_ADMIN') || hasAuthority('LEKAR')")
     public ResponseEntity<?> usluge(Principal principal) {
         try {
             List<SimpleSelectDTORes> usluge = pregledService.usluge(principal.getName());
@@ -74,6 +74,38 @@ public class PregledController {
         try {
             String poruka = pregledService.zakaziPregled(id, principal.getName());
             return new ResponseEntity<>(new SimpleStringResponseDTO(poruka), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/zapocni/{id}")
+    @PreAuthorize("hasAuthority('LEKAR')")
+    public ResponseEntity<?> zapocniPregled(@RequestBody PregledDTOReq pregledDTOReq, @PathVariable("id") int id, Principal principal) {
+        try {
+            int _id = pregledService.pregledZapocni(pregledDTOReq,principal.getName(), id);
+            return new ResponseEntity<>(_id, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('LEKAR')")
+    public ResponseEntity<?> getPregled(@PathVariable("id") int id, Principal principal) {
+        try {
+            PregledLightDTO res = pregledService.getPregled(principal.getName(), id);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{id}/recepti")
+    @PreAuthorize("hasAuthority('LEKAR')")
+    public ResponseEntity<?> createRecept(@RequestBody ReceptDTOReq receptDTOReq,@PathVariable("id") int id, Principal principal) {
+        try {
+            String res = pregledService.addRecept(principal.getName(), id, receptDTOReq);
+            return new ResponseEntity<>(new SimpleStringResponseDTO(res), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
         }

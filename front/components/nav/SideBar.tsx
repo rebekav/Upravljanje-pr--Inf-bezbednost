@@ -45,6 +45,16 @@ export function SideBar(props: SideBarProps) {
           </Box>
         </>
       )}
+      {!loading && session && hasRole(session, "LEKAR") && (
+        <>
+          <Box>
+            <Link href="/app/lekar/pacijenti">Pacijenti</Link>
+          </Box>
+          <Box>
+            <Link href="/app/lekar/radnikalendar">Radni Kalendar</Link>
+          </Box>
+        </>
+      )}
     </VStack>
   );
 }

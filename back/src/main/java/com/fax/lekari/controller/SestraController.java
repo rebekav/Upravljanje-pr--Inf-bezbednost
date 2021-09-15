@@ -2,7 +2,7 @@ package com.fax.lekari.controller;
 
 import com.fax.lekari.dto.KorisnikDtoReq;
 import com.fax.lekari.dto.KorisnikDtoRes;
-import com.fax.lekari.dto.ReceprResDTO;
+import com.fax.lekari.dto.ReceprFullDTO;
 import com.fax.lekari.dto.SimpleStringResponseDTO;
 import com.fax.lekari.service.KorisnikService;
 import com.fax.lekari.service.ReceptSevice;
@@ -47,8 +47,8 @@ public class SestraController {
 
     @GetMapping("/recepti")
     @PreAuthorize("hasAuthority('MEDICINSKA_SESTRA')")
-    public ResponseEntity<List<ReceprResDTO>> recepti(Principal principal) throws Exception {
-        List<ReceprResDTO> korisnici = receptSevice.sestraRecepti(principal.getName());
+    public ResponseEntity<List<ReceprFullDTO>> recepti(Principal principal) throws Exception {
+        List<ReceprFullDTO> korisnici = receptSevice.sestraRecepti(principal.getName());
         return new ResponseEntity<>(korisnici, HttpStatus.OK);
     }
 

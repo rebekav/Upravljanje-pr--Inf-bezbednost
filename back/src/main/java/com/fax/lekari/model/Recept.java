@@ -26,6 +26,8 @@ public class Recept implements Serializable {
 
     private String naziv;
 
+    private String napomena;
+
     //one-to-one association to Pregled
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pregled_id", referencedColumnName = "id")

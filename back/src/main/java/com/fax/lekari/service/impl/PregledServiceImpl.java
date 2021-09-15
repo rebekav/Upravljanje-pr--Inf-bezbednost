@@ -1,13 +1,9 @@
 package com.fax.lekari.service.impl;
 
-import com.fax.lekari.dto.PregledDTOReq;
-import com.fax.lekari.dto.PregledDtoRes;
-import com.fax.lekari.dto.SimpleSelectDTORes;
-import com.fax.lekari.model.Pregled;
-import com.fax.lekari.model.Role;
-import com.fax.lekari.model.User;
-import com.fax.lekari.model.Usluga;
+import com.fax.lekari.dto.*;
+import com.fax.lekari.model.*;
 import com.fax.lekari.repository.PregledRepository;
+import com.fax.lekari.repository.ReceptRepository;
 import com.fax.lekari.repository.UserRepository;
 import com.fax.lekari.repository.UslugaRepository;
 import com.fax.lekari.service.EmailService;
@@ -20,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PregledServiceImpl implements PregledService {
@@ -35,6 +32,9 @@ public class PregledServiceImpl implements PregledService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    ReceptRepository receptRepository;
 
     @Override
     public List<PregledDtoRes> istorijaPregleda(String name) throws Exception {
@@ -141,6 +141,57 @@ public class PregledServiceImpl implements PregledService {
     }
 
     @Override
+    public PregledLightDTO getPregled(String name, int id) throws Exception {
+        User user = userRepository.findByEmail(name);
+        if (user == null) {
+            throw new Exception("Korisnik ne postoji");
+        }
+        Optional<Pregled> pregledOptional = pregledRepository.findById(id);
+        if (!pregledOptional.isPresent()) {
+            throw new Exception("Termin ne postoji");
+        }
+
+        Pregled pregled = pregledOptional.get();
+        if(pregled.getLekar().getId() != user.getId()){
+            throw new Exception("Pacijent nije vas");
+        }
+        PregledLightDTO pl = new PregledLightDTO();
+        pl.setId(pregled.getId());
+        pl.setLekar(pregled.getLekar().getIme() + " "+pregled.getLekar().getPrezime());
+        pl.setSestra(pregled.getMedicinskaSestra().getIme() + " "+pregled.getMedicinskaSestra().getPrezime());
+        pl.setPacijent(pregled.getPacijent().getIme() + " "+pregled.getPacijent().getPrezime());
+        pl.setPacijent_id(pregled.getPacijent().getId());
+        pl.setUsluga(pregled.getUsluga().getNaziv());
+        pl.setPodaciOPregledu(pregled.getPodaciOPregledu());
+        pl.setRecepti(pregled.getRecepti().stream().map(recept -> new ReceptDTORes(recept)).collect(Collectors.toList()));
+        return pl;
+    }
+
+    @Override
+    public String addRecept(String name, int id, ReceptDTOReq receptDTOReq) throws Exception {
+        User user = userRepository.findByEmail(name);
+        if (user == null) {
+            throw new Exception("Korisnik ne postoji");
+        }
+        Optional<Pregled> pregledOptional = pregledRepository.findById(id);
+        if (!pregledOptional.isPresent()) {
+            throw new Exception("Termin ne postoji");
+        }
+
+        Pregled pregled = pregledOptional.get();
+        if(pregled.getLekar().getId() != user.getId()){
+            throw new Exception("Pacijent nije vas");
+        }
+        Recept r = new Recept();
+        r.setOveren(false);
+        r.setNaziv(receptDTOReq.getNaziv());
+        r.setNapomena(receptDTOReq.getNapomena());
+        r.setPregled(pregled);
+        receptRepository.save(r);
+        return "Success";
+    }
+
+    @Override
     public String zakaziPregled(int id, String name) throws Exception {
         User user = userRepository.findByEmail(name);
         if (user == null) {
@@ -192,8 +243,6 @@ public class PregledServiceImpl implements PregledService {
             throw new Exception("Usluga ne pripada vasoj klinici");
         }
 
-
-
         Pregled pregled = new Pregled();
         pregled.setLekar(lekar);
         pregled.setPodaciOPregledu(pregledDTOReq.getPodaciOPregledu());
@@ -203,7 +252,7 @@ public class PregledServiceImpl implements PregledService {
         pregled.setTrajanje(pregledDTOReq.getTrajanje());
 
         //String sDate6 = "31-12-1998 23:37:50";
-//        "2021-08-12T13:12"
+        //"2021-08-12T13:12"
         String vremePregleda = pregledDTOReq.getVreme().replace("T", " ");
         SimpleDateFormat formatter6=new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date vreme=formatter6.parse(vremePregleda);
@@ -213,6 +262,53 @@ public class PregledServiceImpl implements PregledService {
         return "Success";
     }
 
+    @Override
+    public int pregledZapocni(PregledDTOReq pregledDTOReq, String name, int id) throws Exception {
+        Optional<User> pacijent = userRepository.findById(id);
+        if (!pacijent.isPresent()) {
+            throw new Exception("Korisnik ne postoji");
+        }
+        Optional<User> lekarOpt = userRepository.findById(pregledDTOReq.getLekarId());
+        if(!lekarOpt.isPresent()){
+            throw new Exception("Lekar ne postoji");
+        }
+        Optional<User> medicinskaSestraOpt = userRepository.findById(pregledDTOReq.getMedicinskaSestraId());
+        if(!medicinskaSestraOpt.isPresent()){
+            throw new Exception("Medicinska sestra ne postoji");
+        }
+        User lekar = lekarOpt.get();
+        User medicinskaSestra = medicinskaSestraOpt.get();
+
+        if(lekar.getKlinika().getId() != medicinskaSestra.getKlinika().getId()){
+            throw new Exception("Medicinska sestra nije iz vase klinike");
+        }
+        Optional<Usluga> uslugaOpt = uslugaRepository.findById(pregledDTOReq.getUslugaId());
+        if(!uslugaOpt.isPresent()){
+            throw new Exception("Usluga ne postoji");
+        }
+        Usluga usluga = uslugaOpt.get();
+        if(usluga.getKlinika().getId() != lekar.getKlinika().getId()){
+            throw new Exception("Usluga ne pripada vasoj klinici");
+        }
+
+        Pregled pregled = new Pregled();
+        pregled.setLekar(lekar);
+        pregled.setPodaciOPregledu(pregledDTOReq.getPodaciOPregledu());
+        pregled.setUsluga(usluga);
+        pregled.setPopust(pregledDTOReq.getPopust());
+        pregled.setMedicinskaSestra(medicinskaSestra);
+        pregled.setTrajanje(pregledDTOReq.getTrajanje());
+        pregled.setPacijent(pacijent.get());
+        //String sDate6 = "31-12-1998 23:37:50";
+        //"2021-08-12T13:12"
+        String vremePregleda = pregledDTOReq.getVreme().replace("T", " ");
+        SimpleDateFormat formatter6=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date vreme=formatter6.parse(vremePregleda);
+        pregled.setVreme(vreme);
+
+        pregledRepository.save(pregled);
+        return pregled.getId();
+    }
 
 
     @Override

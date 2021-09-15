@@ -1,20 +1,16 @@
 package com.fax.lekari.service.impl;
 
-import com.fax.lekari.dto.KorisnikDtoRes;
 import com.fax.lekari.dto.PregledDtoRes;
-import com.fax.lekari.dto.ReceprResDTO;
+import com.fax.lekari.dto.ReceprFullDTO;
 import com.fax.lekari.model.Pregled;
 import com.fax.lekari.model.Recept;
 import com.fax.lekari.model.User;
-import com.fax.lekari.model.ZdravstveniKarton;
 import com.fax.lekari.repository.*;
-import com.fax.lekari.security.SecurityConfiguration;
 import com.fax.lekari.service.ReceptSevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +25,12 @@ public class ReceptServiceImpl implements ReceptSevice {
     @Autowired
     PregledRepository pregledRepository;
     @Override
-    public List<ReceprResDTO> sestraRecepti(String name) throws Exception{
+    public List<ReceprFullDTO> sestraRecepti(String name) throws Exception{
         User lekar = userRepository.findByEmail(name);
         if (lekar == null) {
             throw new Exception("Korisnik ne postoji");
         }
-        List<ReceprResDTO> response = new ArrayList<>();
+        List<ReceprFullDTO> response = new ArrayList<>();
         List<Pregled> pregledi = pregledRepository.findAllByMedicinskaSestraAndPacijentIsNotNull(lekar);
         for(Pregled p:pregledi){
             User pacijent = p.getPacijent();
@@ -52,10 +48,11 @@ public class ReceptServiceImpl implements ReceptSevice {
             tmp.setPacijent(p.getPacijent().getIme() + " " + p.getPacijent().getPrezime() + " " + p.getPacijent().getIdentifikator());
 
             for(Recept r: p.getRecepti()){
-                ReceprResDTO tmp1 = new ReceprResDTO();
+                ReceprFullDTO tmp1 = new ReceprFullDTO();
                 tmp1.setId(r.getId());
                 tmp1.setNaziv(r.getNaziv());
                 tmp1.setOveren(r.isOveren());
+                tmp1.setNapomena(r.getNapomena());
                 tmp1.setPregled(tmp);
                 response.add(tmp1);
             }

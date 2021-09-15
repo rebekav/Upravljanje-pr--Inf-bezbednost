@@ -1,7 +1,6 @@
 import { Box, Text } from "@chakra-ui/layout";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/client";
-import { useRouter } from "next/dist/client/router";
 import { Dashboard } from "../../components/layout/Dashboard";
 
 const Home: NextPage = (props) => {

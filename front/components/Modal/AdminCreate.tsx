@@ -33,7 +33,7 @@ export function AdminCreate(props: AdminCreateProps) {
     <Modal isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Dodaj Kliniku</ModalHeader>
+        <ModalHeader>Dodaj Admina</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Stack spacing={3}>

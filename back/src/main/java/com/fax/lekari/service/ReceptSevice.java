@@ -1,11 +1,11 @@
 package com.fax.lekari.service;
 
-import com.fax.lekari.dto.ReceprResDTO;
+import com.fax.lekari.dto.ReceprFullDTO;
 
 import java.util.List;
 
 public interface ReceptSevice {
-    List<ReceprResDTO> sestraRecepti(String name)  throws Exception;
+    List<ReceprFullDTO> sestraRecepti(String name)  throws Exception;
 
     String overa(int id, String name) throws Exception ;
 }

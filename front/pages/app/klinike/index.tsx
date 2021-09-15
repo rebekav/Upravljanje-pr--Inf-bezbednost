@@ -1,4 +1,4 @@
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, useToast } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import {
   Table,
@@ -24,6 +24,7 @@ interface KlinikaProps {
 
 const Klinika: NextPage<KlinikaProps> = (props) => {
   const { data, isLoading, error, mutate } = getKlinike(props.session);
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   console.log(data);
   return (
@@ -75,6 +76,13 @@ const Klinika: NextPage<KlinikaProps> = (props) => {
         isOpen={isOpen}
         onAction={(data) => {
           return createKlinika(props.session, data).then((v) => {
+            toast({
+              title: "Upsesno",
+              description: "Dodata je nova klinika",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
             return mutate();
           });
         }}
