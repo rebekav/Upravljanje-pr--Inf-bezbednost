@@ -12,6 +12,7 @@ import { Input, Text } from "@chakra-ui/react";
 import { Box, Stack } from "@chakra-ui/layout";
 import { useState } from "react";
 import { KorisnikReqDTO } from "../../util/types/korisnik";
+
 interface AdminCreateProps {
   isOpen: boolean;
   onClose: () => void;
@@ -105,19 +106,24 @@ export function AdminCreate(props: AdminCreateProps) {
           <Button
             variant="ghost"
             onClick={() => {
-              props.onAction(data).then((d) => {
-                setData({
-                  ime: "",
-                  prezime: "",
-                  adresa: "",
-                  email: "",
-                  idKlinika: 0,
-                  identifikator: "",
-                  pass: "",
-                  telefon: "",
+              props
+                .onAction(data)
+                .then((d) => {
+                  setData({
+                    ime: "",
+                    prezime: "",
+                    adresa: "",
+                    email: "",
+                    idKlinika: 0,
+                    identifikator: "",
+                    pass: "",
+                    telefon: "",
+                  });
+                  props.onClose();
+                })
+                .catch((err) => {
+                  console.log(err);
                 });
-                props.onClose();
-              });
             }}
           >
             Dodaj

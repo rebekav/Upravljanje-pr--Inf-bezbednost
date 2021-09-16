@@ -2,6 +2,7 @@ import { Session } from "next-auth";
 import useSWR from "swr";
 import { PregledLightDTO, PregledReqDTO } from "../types/pregled";
 import { ReceptReqDTO } from "../types/recept";
+import { zdravstveniKartonDTOReq } from "../types/zdravstveniKarton";
 import { fetcher, URL } from "./base";
 
 export const zapociPregled = (
@@ -33,6 +34,16 @@ export const getPregled = (
 
 export const addRecept = (session: Session, id: number, data: ReceptReqDTO) => {
   return fetcher(session, URL + `/pregled/${id}/recepti`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const zavrsiPregled = (
+  session: Session,
+  data: zdravstveniKartonDTOReq
+) => {
+  return fetcher(session, URL + `/karton/beleska`, {
     method: "POST",
     body: JSON.stringify(data),
   });

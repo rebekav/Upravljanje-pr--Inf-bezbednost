@@ -2,6 +2,7 @@ import { Session } from "next-auth";
 import useSWR from "swr";
 import { PregledResDTOToEvent } from "../adapters";
 import { KorisnikResDTO } from "../types/korisnik";
+import { PregledResDTO } from "../types/pregled";
 import { ReceptResDTO } from "../types/recept";
 import { fetcher, URL } from "./base";
 

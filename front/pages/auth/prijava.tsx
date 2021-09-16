@@ -82,6 +82,7 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
                     } else router.reload();
                   })
                   .catch((err) => {
+                    console.log(err);
                     toast({
                       title: "Greska",
                       description: "Greska prilikom logovanja",

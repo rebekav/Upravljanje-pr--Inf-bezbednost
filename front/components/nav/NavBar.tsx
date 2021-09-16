@@ -53,7 +53,7 @@ export function NavBar(props: NavBarProps) {
               <MenuDivider />
               <MenuItem
                 onClick={() => {
-                  signOut();
+                  signOut({ redirect: false });
                   router.push("/auth/prijava");
                 }}
               >

@@ -15,19 +15,25 @@ import { getSession } from "next-auth/client";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { Dashboard } from "../../../components/layout/Dashboard";
-import { addRecept, getPregled } from "../../../util/api/pregled";
+import {
+  addRecept,
+  getPregled,
+  zavrsiPregled,
+} from "../../../util/api/pregled";
 import { Button } from "@chakra-ui/button";
 import { ReceptCreate } from "../../../components/Modal/ReceptCreate";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, useToast, Input } from "@chakra-ui/react";
 
 interface PregledProps {
   session: Session;
 }
 const Pregled: NextPage<PregledProps> = (props) => {
+  const toast = useToast();
   const router = useRouter();
   const { id } = router.query;
   const { data, isLoading, mutate } = getPregled(props.session, id);
-  const [podaciOPregledu, setPodaciOPregledu] = useState("");
+  const [izvestaj, setIzvestaj] = useState("");
+  const [bolest, setBolest] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Dashboard>
@@ -62,6 +68,12 @@ const Pregled: NextPage<PregledProps> = (props) => {
             </Text>
             <Text>{data?.usluga}</Text>
           </HStack>
+          <HStack>
+            <Text fontWeight="bold" color="gray.400">
+              Podaci o pregledu:
+            </Text>
+            <Text>{data?.podaciOPregledu}</Text>
+          </HStack>
           <Divider />
           <HStack
             w="full"
@@ -78,9 +90,20 @@ const Pregled: NextPage<PregledProps> = (props) => {
                 w="full"
                 rows={9}
                 resize="none"
-                value={podaciOPregledu}
-                onChange={(e) => setPodaciOPregledu(e.target.value)}
+                value={izvestaj}
+                onChange={(e) => setIzvestaj(e.target.value)}
               ></Textarea>
+              <Text fontWeight="bold" color="gray.400" fontSize="xl" pt="1">
+                Bolest/Dijagnoza:
+              </Text>
+
+              <Input
+                w="full"
+                rows={9}
+                resize="none"
+                value={bolest}
+                onChange={(e) => setBolest(e.target.value)}
+              ></Input>
             </VStack>
             <Table width="50%">
               <TableCaption
@@ -126,7 +149,21 @@ const Pregled: NextPage<PregledProps> = (props) => {
             </Table>
           </HStack>
           <HStack align="stretch" w="full" justifyContent="end">
-            <Button colorScheme="green">Zavrsi pregled</Button>
+            <Button
+              colorScheme="green"
+              onClick={() => {
+                if (data)
+                  zavrsiPregled(props.session, {
+                    idPregled: data.id,
+                    bolest: bolest,
+                    izvestaj: izvestaj,
+                  }).then((v) => {
+                    router.back();
+                  });
+              }}
+            >
+              Zavrsi pregled
+            </Button>
           </HStack>
           <ReceptCreate
             isOpen={isOpen}
@@ -134,6 +171,13 @@ const Pregled: NextPage<PregledProps> = (props) => {
             onAction={(r) => {
               if (data)
                 return addRecept(props.session, data?.id, r).then((v) => {
+                  toast({
+                    title: "Upsesno",
+                    description: "Dodata je novi recept",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                  });
                   return mutate();
                 });
               return new Promise((r, reject) => {

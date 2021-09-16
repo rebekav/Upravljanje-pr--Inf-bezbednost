@@ -37,3 +37,13 @@ export const createAdmin = (session: Session, data: KorisnikReqDTO) => {
     body: JSON.stringify(data),
   });
 };
+
+export const changePass = (
+  session: Session,
+  data: { oldPassword: string; newPassword: string }
+) => {
+  return fetcher(session, URL + `/change-password`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+};

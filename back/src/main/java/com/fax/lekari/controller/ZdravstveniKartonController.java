@@ -30,7 +30,7 @@ public class ZdravstveniKartonController {
         }
     }
 
-    @PostMapping("/dodajBelesku")
+    @PostMapping("/beleska")
     @PreAuthorize("hasAuthority('LEKAR')")
     public ResponseEntity<?> dodajBelesku(@RequestBody ZdravstveniKartonDtoReq zdravstveniKartonDtoReq, Principal principal) {
         try {
@@ -42,14 +42,4 @@ public class ZdravstveniKartonController {
         }
     }
 
-    @PutMapping("/overa/{id}")
-    @PreAuthorize("hasAuthority('MEDICINSKA_SESTRA')")
-    public ResponseEntity<?> overa(@PathVariable("id") int id, Principal principal) {
-        try {
-            String poruka = zdravstveniKartonService.overa(id, principal.getName());
-            return new ResponseEntity<>(new SimpleStringResponseDTO(poruka), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
-    }
 }

@@ -19,7 +19,7 @@ import {
   createAdmin,
   getKorisnici,
 } from "../../../util/api/korisnik";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, useToast } from "@chakra-ui/react";
 import { KCreate } from "../../../components/Modal/KCreate";
 import { AdminCreate } from "../../../components/Modal/AdminCreate";
 
@@ -28,6 +28,7 @@ interface KorsniciProps {
 }
 
 const Korisnici: NextPage<KorsniciProps> = (props) => {
+  const toast = useToast();
   const { data, isLoading, error, mutate } = getKorisnici(props.session);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -98,18 +99,52 @@ const Korisnici: NextPage<KorsniciProps> = (props) => {
         onClose={onClose}
         isOpen={isOpen}
         onAction={(d) => {
-          return createAdminKlinike(props.session, d).then((v) => {
-            return mutate();
-          });
+          return createAdminKlinike(props.session, d)
+            .then((v) => {
+              toast({
+                title: "Upsesno",
+                description: "Dodata je novi admin klinike",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              return mutate();
+            })
+            .catch((err) => {
+              toast({
+                title: "Greska",
+                description: err.poruka || err.message,
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            });
         }}
       />
       <AdminCreate
         onClose={_onClose}
         isOpen={_isOpen}
         onAction={(d) => {
-          return createAdmin(props.session, d).then((v) => {
-            return mutate();
-          });
+          return createAdmin(props.session, d)
+            .then((v) => {
+              toast({
+                title: "Upsesno",
+                description: "Dodata je novi admin",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              return mutate();
+            })
+            .catch((err) => {
+              toast({
+                title: "Greska",
+                description: err.poruka || err.message,
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+              });
+            });
         }}
       />
     </Dashboard>

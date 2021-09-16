@@ -3,13 +3,13 @@
 INSERT INTO `klinika` (`naziv`,`adresa`,`opis`) VALUES
 ('Ortopetska ordinacija','Neka Adresa 18, Novi Sad','Opis ortopetske ordinacije...');
 
-INSERT INTO `user` (`email`, `identifikator`, `ime`, `prezime` ,`pass`, `validiran`, `klinika_id`) VALUES
-('admin@gmail.com','admin','admin','admin','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,null),
-('sestra@gmail.com','sestra','Kristina','Pajovic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1),
-('pacijent@gmail.com','pacijent','Sima','Simic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1),
-('lekar@gmail.com','lekar','Aleksa','Aleksic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1),
-('pera@gmail.com','pera','Pera','Peric','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1),
-('ana@gmail.com','ana','Ana','Jovanovic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1);
+INSERT INTO `user` (`email`, `identifikator`, `ime`, `prezime` ,`pass`, `validiran`, `klinika_id`, `expire`) VALUES
+('admin@gmail.com','admin','admin','admin','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,null, '2021-09-1'),
+('sestra@gmail.com','sestra','Kristina','Pajovic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
+('pacijent@gmail.com','pacijent','Sima','Simic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
+('lekar@gmail.com','lekar','Aleksa','Aleksic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
+('pera@gmail.com','pera','Pera','Peric','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
+('ana@gmail.com','ana','Ana','Jovanovic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null);
 
 INSERT INTO `role` (`naziv`) VALUES
 ('SUPER_ADMIN'),
@@ -36,5 +36,5 @@ INSERT INTO `recept` (`overen`,`naziv`,`napomena`,`pregled_id`) VALUES
 (true,'naziv recepta','Neki lek 2x1',1);
 
 
-INSERT INTO `zdravstveni_karton` (`overen`,`terapija`,`pregled_id`) VALUES
-(true,'terapija neka',1);
+INSERT INTO `zdravstveni_karton` (`pregled_id`) VALUES
+(1);

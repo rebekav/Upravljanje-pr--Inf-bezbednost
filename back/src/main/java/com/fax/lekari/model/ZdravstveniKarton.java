@@ -22,10 +22,6 @@ public class ZdravstveniKarton implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
-	private byte overen;
-
-	private String terapija;
-
 	@Lob
 	@Column(name="beleska", length=512)
 	private String beleska;

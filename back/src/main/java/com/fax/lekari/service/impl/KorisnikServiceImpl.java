@@ -334,6 +334,7 @@ public class KorisnikServiceImpl implements KorisnikService {
             throw new Exception("Pogresna stara lozinka!");
         }
         user.setPass(configuration.passwordEncoder().encode(changePasswordDto.getNewPassword()));
+        user.setExpire(null);
         userRepository.save(user);
     }
 

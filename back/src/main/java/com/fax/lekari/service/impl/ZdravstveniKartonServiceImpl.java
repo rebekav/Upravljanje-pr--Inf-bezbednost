@@ -55,9 +55,6 @@ public class ZdravstveniKartonServiceImpl implements ZdravstveniKartonService {
         for (ZdravstveniKarton zk : logovi) {
             ZdravstveniKartonDtoRes tmp = new ZdravstveniKartonDtoRes();
             tmp.setId(zk.getId());
-            tmp.setOveren(zk.getOveren());
-            tmp.setVreme(zk.getVreme().toString());
-            tmp.setTerapija(zk.getTerapija());
             String dijagnoza = zk.getBeleska();
             if (dijagnoza != null && !dijagnoza.isEmpty()) {
                 String desifrovanaDijagnoza = this.encriptionService.desifruj(dijagnoza);
@@ -97,24 +94,6 @@ public class ZdravstveniKartonServiceImpl implements ZdravstveniKartonService {
         return getZdravstveniKartonDtoRes(pacijent);
     }
 
-    @Override
-    public String overa(int id, String name) throws Exception {
-        User user = userRepository.findByEmail(name);
-        if (user == null) {
-            throw new Exception("Korisnik ne postoji");
-        }
-        Optional<ZdravstveniKarton> kartonOptional = zdravstveniKartonRepository.findById(id);
-        if (!kartonOptional.isPresent()) {
-            throw new Exception("Pregled ne postoji");
-        }
-        ZdravstveniKarton karton = kartonOptional.get();
-        if (karton.getPregled().getMedicinskaSestra().getId() != user.getId()) {
-            throw new Exception("Nemate permiziju");
-        }
-        karton.setOveren((byte) 1);
-        zdravstveniKartonRepository.save(karton);
-        return "Overen";
-    }
 
     public static String getTagValue(String xml, String tagName) {
         return xml.split("<" + tagName + ">")[1].split("</" + tagName + ">")[0];
@@ -142,7 +121,6 @@ public class ZdravstveniKartonServiceImpl implements ZdravstveniKartonService {
             zdravstveniKarton = pregled.getZdravstveniKartons();
         }
 
-        zdravstveniKarton.setTerapija(zdravstveniKartonDtoReq.getTerapija());
         zdravstveniKarton.setPregled(pregled);
         zdravstveniKarton.setVreme(new Date());
 

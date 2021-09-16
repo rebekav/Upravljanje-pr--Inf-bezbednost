@@ -84,6 +84,16 @@ export function ZapoceniPregled(props: ZapoceniPregledProps) {
                 </Select>
               </Box>
               <Box>
+                <Text pb="2">Podaci o pregledu:</Text>
+                <Textarea
+                  resize="vertical"
+                  value={data["podaciOPregledu"]}
+                  onChange={(e) =>
+                    setData({ ...data, podaciOPregledu: e.target.value })
+                  }
+                ></Textarea>
+              </Box>
+              <Box>
                 <Text pb="2">Trajanje:</Text>
                 <Input
                   type="number"

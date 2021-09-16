@@ -38,6 +38,7 @@ export function MyCalendar(props: MyCalendarProps) {
         week: "Nedelja",
         work_week: "Radna nedelja",
         yesterday: "Juce",
+        event: "Pacijent za pregled",
       }}
       events={props.events}
       startAccessor="start"

@@ -12,5 +12,4 @@ public interface ZdravstveniKartonService {
 
     List<ZdravstveniKartonDtoRes> kartonPacijenta(int id, String name) throws Exception;
 
-    String overa(int id, String name) throws Exception;;
 }

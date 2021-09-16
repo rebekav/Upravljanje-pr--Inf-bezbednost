@@ -31,6 +31,7 @@ export default NextAuth({
             credentials: "include",
           })
         ).json();
+        if (user.poruka) throw new Error(user.poruka);
         if (!user.error) {
           // Any object returned will be saved in `user` property of the JWT
           return {

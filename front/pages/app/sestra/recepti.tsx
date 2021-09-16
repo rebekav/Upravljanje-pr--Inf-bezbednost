@@ -12,8 +12,7 @@ import { GetServerSideProps, NextPage } from "next";
 import { Session } from "next-auth";
 import { getSession } from "next-auth/client";
 import { Dashboard } from "../../../components/layout/Dashboard";
-import { PacijentRow } from "../../../components/TableRows/PacijentRow";
-import { getKorisnici, getRecepti } from "../../../util/api/sestra";
+import { getRecepti } from "../../../util/api/sestra";
 import { ReceptRow } from "../../../components/TableRows/ReceptRow";
 
 interface KorsniciProps {

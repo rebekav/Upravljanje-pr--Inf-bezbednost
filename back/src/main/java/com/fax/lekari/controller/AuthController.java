@@ -51,9 +51,6 @@ public class AuthController {
         if (userDb.getValidiran() != 1) {
             return new ResponseEntity<>(new SimpleStringResponseDTO("Nalog nije aktivan"), HttpStatus.BAD_REQUEST);
         }
-        if (userDb.getExpire()!=null && userDb.getExpire().before(new Date())){
-            return new ResponseEntity<>(new SimpleStringResponseDTO("Vreme za promenu passworda isteklo"), HttpStatus.BAD_REQUEST);
-        }
         return new ResponseEntity<>(tokenRes, HttpStatus.OK);
     }
     @GetMapping("/me")
