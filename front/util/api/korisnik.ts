@@ -47,3 +47,14 @@ export const changePass = (
     body: JSON.stringify(data),
   });
 };
+
+export const passwordLess = (data: { username: string }) => {
+  return fetch(URL + `/passwordless`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res.json());
+};

@@ -10,12 +10,14 @@ import com.fax.lekari.repository.PregledRepository;
 import com.fax.lekari.repository.RolesRepository;
 import com.fax.lekari.repository.UserRepository;
 import com.fax.lekari.security.SecurityConfiguration;
+import com.fax.lekari.service.EmailService;
+import com.fax.lekari.service.EncriptionService;
 import com.fax.lekari.service.KorisnikService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,12 @@ public class KorisnikServiceImpl implements KorisnikService {
 
     @Autowired
     PregledRepository pregledRepository;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    EncriptionService encriptionService;
 
     @Override
     public String registerKlinikaAdmin(KorisnikDtoReq korisnikDto) throws Exception {
@@ -128,6 +136,41 @@ public class KorisnikServiceImpl implements KorisnikService {
         user.setExpire(date);
         userRepository.save(user);
         return "Success";
+    }
+
+    @Override
+    public void sendPasswordless(String email) throws Exception {
+        User korisnik = userRepository.findByEmail(email);
+        if(korisnik==null){
+            throw new Exception("Korisnik ne postoji");
+        }
+        byte[] array = new byte[32];
+        new Random().nextBytes(array);
+        String token = Base64.getUrlEncoder().encodeToString(array);
+        LocalDateTime time = LocalDateTime.now();
+        time = time.plusMinutes(10);
+        korisnik.setPasswordlessToken(token);
+        korisnik.setPasswordlessExpire(time);
+        userRepository.save(korisnik);
+        emailService.sendPasswordless(email, token);
+    }
+
+    @Override
+    public User checkPasswordless(String token) throws Exception {
+        if(token.isEmpty()){
+            throw  new Exception("Token je prazan");
+        }
+        User korisnik = userRepository.findByPasswordlessToken(token);
+        if(korisnik==null){
+            throw new Exception("Pogresan token ili je vec iskorisccen");
+        }
+        if(korisnik.getPasswordlessExpire() == null || korisnik.getPasswordlessExpire().compareTo(LocalDateTime.now())<0){
+            throw new Exception("Token je istekao");
+        }
+        korisnik.setPasswordlessToken("");
+        korisnik.setPasswordlessExpire(null);
+        userRepository.save(korisnik);
+        return korisnik;
     }
 
     @Override

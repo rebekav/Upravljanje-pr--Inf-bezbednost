@@ -26,7 +26,6 @@ const Klinika: NextPage<KlinikaProps> = (props) => {
   const { data, isLoading, error, mutate } = getKlinike(props.session);
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  console.log(data);
   return (
     <Dashboard>
       {isLoading ? (

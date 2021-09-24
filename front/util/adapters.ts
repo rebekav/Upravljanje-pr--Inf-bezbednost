@@ -1,3 +1,5 @@
+import { PregledResDTO } from "./types/pregled";
+
 export function PregledResDTOToEvent(p: PregledResDTO) {
   return {
     allDay: false,

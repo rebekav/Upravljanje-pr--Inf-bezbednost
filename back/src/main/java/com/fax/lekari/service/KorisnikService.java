@@ -6,7 +6,6 @@ import com.fax.lekari.model.User;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface KorisnikService {
     String registerKlinikaAdmin(KorisnikDtoReq korisnikDto) throws Exception;
@@ -42,4 +41,8 @@ public interface KorisnikService {
     String registerLekar(KorisnikDtoReq korisnikDto, String name) throws Exception;
 
     String registerSestra(KorisnikDtoReq korisnikDto, String name) throws Exception;
+
+    void sendPasswordless(String username) throws Exception;
+
+    User checkPasswordless(String token)throws Exception;
 }

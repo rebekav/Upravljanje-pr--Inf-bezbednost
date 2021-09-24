@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,10 @@ public class User implements Serializable {
 	private String prezime;
 
 	private String telefon;
+
+	private String passwordlessToken;
+
+	private LocalDateTime passwordlessExpire;
 
 	private byte validiran;
 

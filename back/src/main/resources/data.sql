@@ -4,7 +4,7 @@ INSERT INTO `klinika` (`naziv`,`adresa`,`opis`) VALUES
 ('Ortopetska ordinacija','Neka Adresa 18, Novi Sad','Opis ortopetske ordinacije...');
 
 INSERT INTO `user` (`email`, `identifikator`, `ime`, `prezime` ,`pass`, `validiran`, `klinika_id`, `expire`) VALUES
-('admin@gmail.com','admin','admin','admin','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,null, '2021-09-1'),
+('todorovicveljko1@gmail.com','admin','admin','admin','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,null, '2021-09-1'),
 ('sestra@gmail.com','sestra','Kristina','Pajovic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
 ('pacijent@gmail.com','pacijent','Sima','Simic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),
 ('lekar@gmail.com','lekar','Aleksa','Aleksic','$2a$10$oYu.Hb2m/9FVynFMBkUCge1H2AIVjaRfuKBAEA4b.p1AwcTZCC0E.',1,1, null),

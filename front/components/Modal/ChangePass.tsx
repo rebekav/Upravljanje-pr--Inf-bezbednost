@@ -32,7 +32,6 @@ export function ChangePass(props: ChangePassProps) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Promeni Lozinku</ModalHeader>
-        <ModalCloseButton />
         <ModalBody>
           <Stack spacing={3}>
             {!!poruka && (

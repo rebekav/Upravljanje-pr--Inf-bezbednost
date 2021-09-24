@@ -1,11 +1,12 @@
 import { GetServerSideProps, NextPage } from "next";
 import { csrfToken, getCsrfToken, signIn, useSession } from "next-auth/client";
 import { useRouter } from "next/dist/client/router";
-import { Input, Text } from "@chakra-ui/react";
+import { Divider, Input, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/button";
 import { Flex, Box, Stack } from "@chakra-ui/layout";
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
+import { passwordLess } from "../../util/api/korisnik";
 
 interface PrijavaProps {
   csrfToken: string;
@@ -16,6 +17,7 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
   const toast = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [session, loading] = useSession();
   if (loading) return <div>Loading...</div>;
   if (!loading && session) {
@@ -59,7 +61,7 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
             <Button
               colorScheme="blue"
               onClick={(e) => {
-                fetch("/api/auth/callback/credentials", {
+                fetch("/api/auth/callback/username-password", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -74,7 +76,9 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
                     if (new URL(data.url).searchParams.get("error")) {
                       toast({
                         title: "Greska",
-                        description: "Losi kombinacija email-a i lozinke",
+                        description: new URL(data.url).searchParams.get(
+                          "error"
+                        ),
                         status: "error",
                         duration: 5000,
                         isClosable: true,
@@ -94,6 +98,55 @@ const Prijava: NextPage<PrijavaProps> = (props) => {
               }}
             >
               Prijavi Se
+            </Button>
+          </Flex>
+          <Divider />
+          <Box>
+            <Text pb="2">Email:</Text>
+            <Input
+              placeholder="Email:"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            ></Input>
+          </Box>
+          <Flex justifyContent="center">
+            <Button
+              colorScheme="blue"
+              onClick={(e) => {
+                passwordLess({ username: email })
+                  .then((data) => {
+                    console.log(data);
+                    if (data.poruka != "Success") {
+                      toast({
+                        title: "Greska",
+                        description: "Losa email-a adresa",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    } else {
+                      toast({
+                        title: "Uspesno",
+                        description: "Poslat vam je link za prijavu na email",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    toast({
+                      title: "Greska",
+                      description: "Greska prilikom passwordlessn logovanja",
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  });
+              }}
+            >
+              PasswordLess
             </Button>
           </Flex>
         </Stack>

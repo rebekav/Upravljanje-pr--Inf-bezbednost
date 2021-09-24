@@ -3,6 +3,7 @@ package com.fax.lekari.controller;
 import com.fax.lekari.dto.*;
 import com.fax.lekari.model.User;
 import com.fax.lekari.security.TokenUtils;
+import com.fax.lekari.service.EmailService;
 import com.fax.lekari.service.KorisnikService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,9 @@ public class AuthController {
     @Autowired
     TokenUtils tokenUtils;
 
+
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@RequestBody LoginDTO user) {
-        System.out.println(user.getUsername());
-        System.out.println(user.getPassword());
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(),
                 user.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
@@ -53,6 +53,41 @@ public class AuthController {
         }
         return new ResponseEntity<>(tokenRes, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/passwordless", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> passwordless(@RequestBody LoginDTO user) {
+        try{
+            korisnikService.sendPasswordless(user.getUsername());
+        }
+        catch(Exception e){
+            return  new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new SimpleStringResponseDTO("Success"), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/passwordless/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> passwordlessCheck(@RequestBody TokenDTO body) {
+
+        try{
+            User user = korisnikService.checkPasswordless(body.getToken());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),
+                    user.getPass());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails details = userDetailsService.loadUserByUsername(user.getEmail());
+            User userDb = korisnikService.findByEmail(user.getEmail());
+            TokenDTO tokenRes = new TokenDTO(tokenUtils.generateToken(details));
+            if (userDb.getValidiran() != 1) {
+                return new ResponseEntity<>(new SimpleStringResponseDTO("Nalog nije aktivan"), HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(tokenRes, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(new SimpleStringResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(Principal principal) {
         try {

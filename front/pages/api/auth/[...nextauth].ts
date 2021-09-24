@@ -1,11 +1,12 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
-const URL = "http://localhost:8080";
+import { URL } from "../../../util/api/base";
 
 export default NextAuth({
   // Configure one or more authentication providers
   providers: [
     Providers.Credentials({
+      id: "username-password",
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "Credentials",
       // The credentials is used to generate a suitable form on the sign in page.
@@ -16,6 +17,7 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         // Add logic here to look up the user from the credentials supplied
         const user = await (
           await fetch(URL + "/login", {
@@ -23,6 +25,47 @@ export default NextAuth({
             body: JSON.stringify({
               username: credentials.username,
               password: credentials.password,
+            }),
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          })
+        ).json();
+        if (user.poruka) throw new Error(user.poruka);
+        if (!user.error) {
+          // Any object returned will be saved in `user` property of the JWT
+          return {
+            token: user.token,
+          };
+        } else {
+          // If you return null or false then the credentials will be rejected
+          return null;
+          // You can also Reject this callback with an Error or with a URL:
+          // throw new Error('error message') // Redirect to error page
+          // throw '/path/to/redirect'        // Redirect to a URL
+        }
+      },
+    }),
+    Providers.Credentials({
+      id: "passwordless",
+      // The name to display on the sign in form (e.g. 'Sign in with...')
+      name: "Passwordless",
+      // The credentials is used to generate a suitable form on the sign in page.
+      // You can specify whatever fields you are expecting to be submitted.
+      // e.g. domain, username, password, 2FA token, etc.
+      credentials: {
+        token: { label: "Token", type: "text" },
+      },
+      async authorize(credentials) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        // Add logic here to look up the user from the credentials supplied
+        const user = await (
+          await fetch(URL + "/passwordless/login", {
+            method: "POST",
+            body: JSON.stringify({
+              token: credentials.token,
             }),
             headers: {
               Accept: "application/json",
